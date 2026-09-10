@@ -1,14 +1,35 @@
 # Multi-Agent Researcher
 
-A modular research workflow that decomposes a question into planning, retrieval, analysis, critique, and synthesis stages. The implementation focuses on explicit state transitions and source-aware outputs.
+A modular research workflow that separates planning, evidence collection, analysis, critique, and synthesis. The design makes agent responsibilities and state transitions explicit.
 
 ## Agent graph
 
 ```text
-Question -> Planner -> Researchers -> Analyst -> Critic -> Synthesizer
+Question
+   |
+ Planner
+   |
+ +----------+----------+
+ |          |          |
+Researcher Researcher Researcher   <- parallelizable
+ +----------+----------+
+            |
+         Analyst
+            |
+          Critic
+            |
+       Synthesizer
 ```
 
-Researchers can run independently, while the critic checks evidence coverage before synthesis. The demo uses deterministic local sources so the workflow is runnable without API keys; external search/LLM adapters can be plugged into the same interfaces.
+## Engineering features
+
+- Explicit shared state instead of hidden agent memory
+- Independent researcher stages that can be parallelized
+- Source-aware findings
+- Critic gate that checks evidence diversity
+- Final synthesis with source attribution
+- Local deterministic mode for reproducible tests
+- Clear adapter boundary for external search and LLM providers
 
 ## Run
 
@@ -17,3 +38,5 @@ pip install -e '.[dev]'
 python -m app.research
 pytest -q
 ```
+
+The repository does not claim live web-search results in its deterministic demo mode. Connect a search/LLM adapter when deploying it as a live research assistant.
